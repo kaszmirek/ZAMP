@@ -28,6 +28,13 @@ interp: obj/main.o
 obj/main.o: src/main.cpp inc/Interp4Command.hh
 	g++ -c ${CPPFLAGS} -o obj/main.o src/main.cpp
 
+obj/LibInterface.o: inc/LibInterface.hh inc/Interp4Command.hh src/LibInterface.cpp
+	g++ -c ${CPPFLAGS} -o obj/LibInterface.o src/LibInterface.cpp
+
+obj/Preprocessor.o: src/Preprocessor.cpp inc/Preprocessor.hh
+	g++ -c ${CPPFLAGS} -o obj/Preprocessor.o src/Preprocessor.cpp
+
+
 clean:
 	rm -f obj/* interp core*
 

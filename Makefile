@@ -31,7 +31,7 @@ obj/main.o: src/main.cpp inc/Interp4Command.hh
 obj/LibInterface.o: inc/LibInterface.hh inc/Interp4Command.hh src/LibInterface.cpp
 	g++ -c ${CPPFLAGS} -o obj/LibInterface.o src/LibInterface.cpp
 
-obj/Preprocessor.o: src/preprocessor.cpp inc/preprocessor.hh
+obj/preprocessor.o: src/preprocessor.cpp inc/preprocessor.hh
 	g++ -c ${CPPFLAGS} -o obj/preprocessor.o src/preprocessor.cpp
 
 

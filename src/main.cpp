@@ -5,25 +5,26 @@
 #include "MobileObj.hh"
 #include "preprocessor.hh"
 #include "LibInterface.hh"
+#include "Set4LibInterfaces.hh"
 
 using namespace std;
 
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   string cmd = processCmdFile(argv[1]);
   cout << cmd;
 
-  LibInterface moveiface("libInterp4Move.so",RTLD_LAZY);
-  LibInterface pauseiface("libInterp4Pause.so", RTLD_LAZY);
+  Set4LibInterfaces plugin;
 
-  cout << moveiface.getCmdName() << endl;
-  moveiface.getCmd()->PrintSyntax();
-  moveiface.getCmd()->PrintCmd();
+  plugin["Move"] = new LibInterface("libInterp4Move.so", RTLD_LAZY);
+  plugin["Pause"] = new LibInterface("libInterp4Pause.so", RTLD_LAZY);
+  plugin["Rotate"] = new LibInterface("libInterp4Rotate.so", RTLD_LAZY);
+  plugin["Set"] = new LibInterface("libInterp4Set.so", RTLD_LAZY);
 
-
-  cout << pauseiface.getCmdName() << endl;
-  pauseiface.getCmd()->PrintSyntax();
-  pauseiface.getCmd()->PrintCmd();
-
+  for (auto &plug : plugin)
+  {
+    cout << plug.second->getCmdName() << endl;
+    plug.second->getCmd()->PrintSyntax();
+    plug.second->getCmd()->PrintCmd();
+  }
 }

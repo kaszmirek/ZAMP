@@ -2,26 +2,27 @@
 
 #include <iostream>
 
-using std::cout;
 using std::cerr;
+using std::cout;
 using std::endl;
 
-LibInterface::LibInterface(const char* libName, int mode)
+LibInterface::LibInterface(const char *libName, int mode)
 {
   _LibHandler = dlopen(libName, mode);
-  if(!_LibHandler)
+  if (!_LibHandler)
   {
-    cerr << "!!! Brak biblioteki: "<< libName << endl;
+    cerr << "!!! Brak biblioteki: " << libName << endl;
     exit(1);
   }
-  
+
   void *pFun = dlsym(_LibHandler, "CreateCmd");
-  if (!pFun) {
+  if (!pFun)
+  {
     cerr << "!!! Nie znaleziono funkcji CreateCmd" << endl;
     exit(1);
   }
 
-  _pCreateCmd = *reinterpret_cast<Interp4Command* (**)(void)>(&pFun);
+  _pCreateCmd = *reinterpret_cast<Interp4Command *(**)(void)>(&pFun);
   _pCmd = _pCreateCmd();
   _CmdName = _pCmd->GetCmdName();
 }
@@ -37,7 +38,7 @@ std::string LibInterface::getCmdName()
   return _CmdName;
 }
 
-Interp4Command * LibInterface::getCmd()
+Interp4Command *LibInterface::getCmd()
 {
   return _pCmd;
 }

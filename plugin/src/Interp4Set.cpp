@@ -63,9 +63,10 @@ bool Interp4Set::ExecCmd(MobileObj *pMobObj, int Socket) const
  */
 bool Interp4Set::ReadParams(std::istream &Strm_CmdsList)
 {
-  /*
-   *  Tu trzeba napisać odpowiedni kod.
-   */
+  Strm_CmdsList >> _ObjName;
+  Strm_CmdsList >> _X;
+  Strm_CmdsList >> _Y;
+  Strm_CmdsList >> _RotZ;
   return true;
 }
 
@@ -82,5 +83,5 @@ Interp4Command *Interp4Set::CreateCmd()
  */
 void Interp4Set::PrintSyntax() const
 {
-  cout << "   Set  NazwaObiektu  X[m]  Y[m]" << endl;
+  cout << "   Set  NazwaObiektu  Set X[mm] Y[mm] RotZ[rad]" << endl;
 }

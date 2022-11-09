@@ -63,9 +63,7 @@ bool Interp4Pause::ExecCmd(MobileObj *pMobObj, int Socket) const
  */
 bool Interp4Pause::ReadParams(std::istream &Strm_CmdsList)
 {
-  /*
-   *  Tu trzeba napisać odpowiedni kod.
-   */
+  Strm_CmdsList >> _Timeout;
   return true;
 }
 

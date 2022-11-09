@@ -28,7 +28,9 @@ class Interp4Set : public Interp4Command
    *  Ponieżej zdefiniowane jest tylko jedno pole jako przykład.
    */
 private:
+  std::string _ObjName;
   int _x, _y;
+  double _RotZ;
 
 public:
   /*!

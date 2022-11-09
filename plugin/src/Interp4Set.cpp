@@ -64,8 +64,8 @@ bool Interp4Set::ExecCmd(MobileObj *pMobObj, int Socket) const
 bool Interp4Set::ReadParams(std::istream &Strm_CmdsList)
 {
   Strm_CmdsList >> _ObjName;
-  Strm_CmdsList >> _X;
-  Strm_CmdsList >> _Y;
+  Strm_CmdsList >> _x;
+  Strm_CmdsList >> _y;
   Strm_CmdsList >> _RotZ;
   return true;
 }

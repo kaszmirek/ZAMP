@@ -36,7 +36,7 @@ void Interp4Pause::PrintCmd() const
   /*
    *  Tu trzeba napisać odpowiednio zmodyfikować kod poniżej.
    */
-  cout << GetCmdName() << " " << _PauseLength_ms << " adada" << endl;
+  cout << GetCmdName() << " " << _PauseLength_ms << endl;
 }
 
 /*!

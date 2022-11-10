@@ -83,5 +83,5 @@ Interp4Command *Interp4Set::CreateCmd()
  */
 void Interp4Set::PrintSyntax() const
 {
-  cout << "   Set  NazwaObiektu  Set X[mm] Y[mm] RotZ[rad]" << endl;
+  cout << "   Set     NazwaObiektu  Set X[mm] Y[mm] RotZ[rad]" << endl;
 }

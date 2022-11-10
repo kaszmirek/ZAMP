@@ -1,4 +1,4 @@
-__start__: obj __lines_for_space__ interp __plugin__
+__start__: obj interp __plugin__ __lines_for_space__
 	./run.sh
 
 obj:
@@ -22,8 +22,8 @@ LDFLAGS=-Wall
 
 
 
-interp: obj/main.o obj/LibInterface.o obj/preprocessor.o
-	g++ ${LDFLAGS} -o interp  obj/main.o obj/LibInterface.o obj/preprocessor.o -ldl
+interp: obj/main.o obj/LibInterface.o obj/FileReader.o
+	g++ ${LDFLAGS} -o interp  obj/main.o obj/LibInterface.o obj/FileReader.o -ldl
 
 obj/main.o: src/main.cpp inc/Interp4Command.hh
 	g++ -c ${CPPFLAGS} -o obj/main.o src/main.cpp
@@ -31,8 +31,11 @@ obj/main.o: src/main.cpp inc/Interp4Command.hh
 obj/LibInterface.o: inc/LibInterface.hh inc/Interp4Command.hh src/LibInterface.cpp
 	g++ -c ${CPPFLAGS} -o obj/LibInterface.o src/LibInterface.cpp
 
-obj/preprocessor.o: src/preprocessor.cpp inc/preprocessor.hh
-	g++ -c ${CPPFLAGS} -o obj/preprocessor.o src/preprocessor.cpp
+obj/FileReader.o: src/FileReader.cpp inc/FileReader.hh
+	g++ -c ${CPPFLAGS} -o obj/FileReader.o src/FileReader.cpp
+
+obj/Scene.o: src/Scene.cpp inc/Scene.hh
+	g++ -c ${CPPFLAGS} -o obj/Scene.o src/Scene.cpp
 
 
 clean:

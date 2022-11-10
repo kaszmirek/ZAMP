@@ -11,7 +11,6 @@
  *
  */
 
-
 #ifdef __GNUG__
 #pragma interface
 #endif
@@ -19,22 +18,21 @@
 #include <cmath>
 #include <cassert>
 
-
 /*!
  * \file
  * \brief Definition of the vector template with parametric dimention.
  */
 
+namespace geom
+{
 
-namespace geom {
-
- /*!
-  * \brief Przyjęta wartość błędu obliczeń.
-  *
-  * Przyjęta wartość błędu obliczeń, która wynika ze skończonej
-  * reprezentacji liczb rzeczywistych.
-  */
-#define ERR_DOUBLE   1e-9
+  /*!
+   * \brief Przyjęta wartość błędu obliczeń.
+   *
+   * Przyjęta wartość błędu obliczeń, która wynika ze skończonej
+   * reprezentacji liczb rzeczywistych.
+   */
+#define ERR_DOUBLE 1e-9
 
   /*!
    * \brief Sprawdza znak wartości uwzględniając błąd obliczeń.
@@ -43,40 +41,44 @@ namespace geom {
    * przez stałą \link geomVector.hh::ERR_DOUBLE ERR_DOUBLE\endlink.
    * \param[in] Val - wartość liczbowa, której znak ma być sprawdzony.
    * \retval 1 - gdy Val > \link geomVector.hh::ERR_DOUBLE ERR_DOUBLE\endlink,
-   * \retval 0 - gdy Val jest w przedziale 
+   * \retval 0 - gdy Val jest w przedziale
    *             [\link geomVector.hh::ERR_DOUBLE -ERR_DOUBLE\endlink,
    *              \link geomVector.hh::ERR_DOUBLE ERR_DOUBLE\endlink],
    * \retval -1 - gdy Val < \link geomVector.hh::ERR_DOUBLE -ERR_DOUBLE\endlink,
-   * 
+   *
    */
-  inline
-  int Sgn(double Val) { return Val > ERR_DOUBLE ? 1 : Val < -ERR_DOUBLE ? -1 : 0; }
-  
-/*!
- * \brief Model wektora N-wymiarowego
- *
- * Jest to szablon wektora N-wymiarowego.
- * \param Type - typ współrzędnej wektora,
- * \param Size - rozmiar wektora.
- */
- template<typename Type, unsigned int Size>
- class Vector {
+  inline int Sgn(double Val) { return Val > ERR_DOUBLE ? 1 : Val < -ERR_DOUBLE ? -1
+                                                                               : 0; }
+
+  /*!
+   * \brief Model wektora N-wymiarowego
+   *
+   * Jest to szablon wektora N-wymiarowego.
+   * \param Type - typ współrzędnej wektora,
+   * \param Size - rozmiar wektora.
+   */
+  template <typename Type, unsigned int Size>
+  class Vector
+  {
 
     /*!
      * \brief Tablica współrzędnych wektora
      *
      *  W tablicy tej zapisywane są wartości kolejnych współrzędnych.
      */
-   Type  _Coord[Size];
+    Type _Coord[Size];
 
   public:
-
     /*!
      * \brief Współrzędne wektora są zerowane.
      *
      * Wszystkim współrzędnym przypisana jest wartość 0.
      */
-   Vector() { for (Type &Val : _Coord) Val = 0; }
+    Vector()
+    {
+      for (Type &Val : _Coord)
+        Val = 0;
+    }
 
     /*!
      * \brief Dostęp do wybranej składowej wektora.
@@ -87,7 +89,11 @@ namespace geom {
      *  \pre 0 <= Ind < Size.
      *  \post Referencja do żądanej składowej wektora.
      */
-   Type  &operator [](unsigned int Ind) { assert(Ind < Size); return _Coord[Ind]; }
+    Type &operator[](unsigned int Ind)
+    {
+      assert(Ind < Size);
+      return _Coord[Ind];
+    }
 
     /*!
      *  \brief Dostęp do wybranej składowej wektora.
@@ -98,10 +104,13 @@ namespace geom {
      *  \pre 0 <= Ind < Size.
      *  \post  Referencja do żądanej składowej wektora.
      */
-   Type operator [](unsigned int Ind) const { assert(Ind < Size); return _Coord[Ind]; }
+    Type operator[](unsigned int Ind) const
+    {
+      assert(Ind < Size);
+      return _Coord[Ind];
+    }
 
-
-    /*! 
+    /*!
      *  \brief Dostęp do wybranej składowej wektora.
      *
      *  Operacja implementuje sumę wektorów.
@@ -109,9 +118,9 @@ namespace geom {
      *  \retval  Vector<Type,Size> - obiekt zawierający wartość sumy
      *                           dwóch wektorów \b *this i \e V.
      */
-    Vector<Type,Size>  operator  + (Vector<Type,Size> const &rSkl2) const;
+    Vector<Type, Size> operator+(Vector<Type, Size> const &rSkl2) const;
 
-    /*! 
+    /*!
      *  \brief Dodaje wektora i przypisuje wynik sumy.
      *
      *  Dodaje współrzędne wektora do wektora reprezentowanego przez obiekt,
@@ -119,9 +128,9 @@ namespace geom {
      *  \param  rSkl2 - drugi argument operacji.
      *  \retval *this - referencja do pierwszego argumentu.
      */
-    Vector<Type,Size> &operator += (Vector<Type,Size> const &rSkl2);
+    Vector<Type, Size> &operator+=(Vector<Type, Size> const &rSkl2);
 
-    /*! 
+    /*!
      * \brief Różnica dwóch wektorów.
      *
      *  Operacja implementuje różnicę wektorów.
@@ -129,9 +138,9 @@ namespace geom {
      *  \retval  Vector<Type,Size> - obiekt będący różnicą dwóch wektorów
      *                                  \b *this i \e V.
      */
-   Vector<Type,Size>  operator  - (Vector<Type,Size> const &rOdj) const;
+    Vector<Type, Size> operator-(Vector<Type, Size> const &rOdj) const;
 
-    /*! 
+    /*!
      * \brief Różnica dwóch wektorów i przypisanie wyniku.
      *
      *  Operacja implementuje różnicę wektorów i przypisanie wyniku
@@ -139,67 +148,65 @@ namespace geom {
      *
      *  \param  rOdj - odjemnik.
      *  \retval *this - referencja do samego siebie.
-     *                  Obiekt przyjmuje nową wartość będącą 
+     *                  Obiekt przyjmuje nową wartość będącą
      *                 różnicą dwóch wektorów \b *this i \e V.
      */
-   Vector<Type,Size> &operator -= (Vector<Type,Size> const &rOdj);
+    Vector<Type, Size> &operator-=(Vector<Type, Size> const &rOdj);
 
+    /*!
+     * \brief Mnożenie wektora przez liczbę
+     *
+     * Operator implementuje mnożenie wektora przez liczbę.
+     * \param   Mnoznik - drugi czynnik iloczynu (liczba).
+     * \retval  Vector<Type,Size>  - obiekt będący  iloczynu wektora
+     *                            \b *this i liczby \e Mnoznik.
+     */
+    Vector<Type, Size> operator*(Type Mnoznik) const;
 
-     /*!
-      * \brief Mnożenie wektora przez liczbę
-      *
-      * Operator implementuje mnożenie wektora przez liczbę.
-      * \param   Mnoznik - drugi czynnik iloczynu (liczba).
-      * \retval  Vector<Type,Size>  - obiekt będący  iloczynu wektora
-      *                            \b *this i liczby \e Mnoznik.
-      */
-   Vector<Type,Size>  operator  * (Type Mnoznik) const;
+    /*!
+     * \brief Mnożenie wektora przez liczbę i przypisanie wyniku
+     *
+     * Operator implementuje iloczyn wektora przez liczbę i przypisanie
+     * wyniku do lewego argumentu.
+     *
+     * \param   Mnoznik - drugi czynnik iloczynu (liczba).
+     * \retval *this  - referencję do samego siebie.
+     *              Obiekt przyjmuje nową wartość będącą
+     *              produktem iloczynem \b *this i liczby \e Mnoznik.
+     */
+    Vector<Type, Size> &operator*=(Type Mnoznik);
 
-     /*!
-      * \brief Mnożenie wektora przez liczbę i przypisanie wyniku
-      *
-      * Operator implementuje iloczyn wektora przez liczbę i przypisanie
-      * wyniku do lewego argumentu.
-      *
-      * \param   Mnoznik - drugi czynnik iloczynu (liczba).
-      * \retval *this  - referencję do samego siebie.
-      *              Obiekt przyjmuje nową wartość będącą
-      *              produktem iloczynem \b *this i liczby \e Mnoznik.
-      */
-   Vector<Type,Size> &operator *= (Type Mnoznik);
+    /*!
+     * \brief Dzielenie wektora przez liczbę
+     *
+     * Operator implementuje iloraz wektora przez liczbę.
+     * \param   Dzielnik - dzielnik wektora (liczba).
+     * \retval  Vector<Type,Size>  - obiekt będący ilorazem
+     *                            \b *this (wektor) / \e Dzielnik (liczba).
+     */
+    Vector<Type, Size> operator/(Type Dzielnik) const;
 
-     /*!
-      * \brief Dzielenie wektora przez liczbę
-      *
-      * Operator implementuje iloraz wektora przez liczbę.
-      * \param   Dzielnik - dzielnik wektora (liczba).
-      * \retval  Vector<Type,Size>  - obiekt będący ilorazem
-      *                            \b *this (wektor) / \e Dzielnik (liczba).
-      */
-   Vector<Type,Size>  operator  / (Type Dzielnik) const;
+    /*!
+     * \brief Dzielenie wektora przez liczbę i przypisanie wyniku
+     *
+     * Operator implementuje iloraz wektora przez liczbę
+     * i przypisanie wyniku lewemu argumentowi (wektorowi).
+     * \param   Dzielnik - dzielnik wektora (liczba).
+     * \retval *this  - referencję do samego siebie.
+     *              Obiekt przyjmuje nową wartość będącą
+     *              ilorazem \b *this i liczby \e Dzielnik.
+     */
+    Vector<Type, Size> &operator/=(Type Dzielnik);
 
-     /*!
-      * \brief Dzielenie wektora przez liczbę i przypisanie wyniku
-      *
-      * Operator implementuje iloraz wektora przez liczbę
-      * i przypisanie wyniku lewemu argumentowi (wektorowi).
-      * \param   Dzielnik - dzielnik wektora (liczba).
-      * \retval *this  - referencję do samego siebie.
-      *              Obiekt przyjmuje nową wartość będącą
-      *              ilorazem \b *this i liczby \e Dzielnik.
-      */
-   Vector<Type,Size> &operator /= (Type Dzielnik);
-
-     /*!
-      * \brief Iloczyn skalarny
-      *
-      * Operator implementuje iloczyn skalarny dwóch wektorów.
-      * \param rVec - drugi czynnik iloczynu skalarnego.
-      * \return Wartość będącą iloczynem skalarnym wektorów \b *this
-      *         i \e rVec.
-      */
-   Type  operator & (Vector<Type,Size> const &rVec) const;      // skalar product
-
+    /*!
+     * \brief Iloczyn skalarny
+     *
+     * Operator implementuje iloczyn skalarny dwóch wektorów.
+     * \param rVec - drugi czynnik iloczynu skalarnego.
+     * \return Wartość będącą iloczynem skalarnym wektorów \b *this
+     *         i \e rVec.
+     */
+    Type operator&(Vector<Type, Size> const &rVec) const; // skalar product
 
     /*!
      * \brief Porównanie dwóch wektorów.
@@ -212,9 +219,7 @@ namespace geom {
      *              obliczeń,
      *  \retval  false - w przypadku przeciwnym.
      */
-   bool          operator == (Vector<Type,Size> const &rArg2);
-
-
+    bool operator==(Vector<Type, Size> const &rArg2);
 
     /*!
      *  \brief Length of this vector is computed.
@@ -230,17 +235,23 @@ namespace geom {
      *  Zmienia znak wszystkich składowych wektora na przeciwny.
      *  \return\b *this - zwraca referencję do samego siebie.
      */
-    Vector<Type,Size> &Inverse() { for (Type &Crd : _Coord ) Crd = -Crd; return *this; }
-
-
+    Vector<Type, Size> &Inverse()
+    {
+      for (Type &Crd : _Coord)
+        Crd = -Crd;
+      return *this;
+    }
 
     /*!
      * \brief Zeruje wszystkie współrzędne wektora.
      *
      *  Wszystkim współrzędnym wektora przypisana zostaj wartość 0.
      */
-    void SetZero() { for (Type &Crd : _Coord ) Crd = 0;  }
-
+    void SetZero()
+    {
+      for (Type &Crd : _Coord)
+        Crd = 0;
+    }
 
     /*!
      * \brief Sprawdza czy wektor jest wektorem zerowym.
@@ -252,8 +263,13 @@ namespace geom {
      * \return true - jeśli sgn zwróci dla wszystkich pól zero,
      * \return false - w przypadku przeciwnym.
      */
-    bool IsZero() const  { for (Type Crd : _Coord ) if (Crd) return false;  return true; }
-
+    bool IsZero() const
+    {
+      for (Type Crd : _Coord)
+        if (Crd)
+          return false;
+      return true;
+    }
 
     /*!
      * \brief Sprawdza czy zadana współrzędna znajduje się wewnątrz danego przedziału.
@@ -266,8 +282,10 @@ namespace geom {
      *               (\e x_min, \e x_max).
      * \return false - w przypadku przeciwnym.
      */
-   bool IsInside(unsigned int Ind, Type x_min, Type x_max) const
-     { return (x_min < _Coord[Ind]) && (_Coord[Ind] < x_max);}
+    bool IsInside(unsigned int Ind, Type x_min, Type x_max) const
+    {
+      return (x_min < _Coord[Ind]) && (_Coord[Ind] < x_max);
+    }
 
     /*!
      * \brief Sprawdza czy dany punkt jest wewnątrz prostopadłościanu.
@@ -275,18 +293,18 @@ namespace geom {
      * Zakłada się, że ścianki prostopadłościanu są równoległe do jednej
      * z płaszczyzn kartezjańskiego układu współrzędnych OXY.
      * \param Min - zawiera współrzędne wierzchołka, którego składowe
-     *              mają minimalne wartości spośród składowych tego 
+     *              mają minimalne wartości spośród składowych tego
      *              samego typu wszystkich wierzchołków
      *              tego prostopadłościanu.
      * \param Max - zawiera współrzędne wierzchołka, którego składowe
-     *              mają maksymalne wartości spośród składowych tego 
+     *              mają maksymalne wartości spośród składowych tego
      *              samego typu wszystkich wierzchołków
      *              tego prostopadłościanu.
      *              prostopadłościanu.
      * \return  true  - jeśli punkt jest wewnątrz prostopadłościanu.
      * \return  false - w przypadku przeciwnym.
      */
-   bool IsInside(Vector<Type,Size> const &Min, Vector<Type,Size> Max) const;
+    bool IsInside(Vector<Type, Size> const &Min, Vector<Type, Size> Max) const;
 
     /*!
      * \brief Normalizuje wektor
@@ -296,122 +314,106 @@ namespace geom {
      * Ewentualne odchyłki są związane z błędami obliczeń
      * będących następstwem skończonej reprezentacji liczb rzeczywistych.
      */
-   void Normalize() 
-     { Type d = Length(); for (Type &Crd : _Coord) Crd /= d; }
- };
+    void Normalize()
+    {
+      Type d = Length();
+      for (Type &Crd : _Coord)
+        Crd /= d;
+    }
+  };
 
- 
- template<typename Type, unsigned int Size>
- inline
- bool Vector<Type,Size>::IsInside(Vector<Type,Size> const &Min, Vector<Type,Size> Max) const
- {
-   for (unsigned Ind = 0; Ind < Size; ++Ind) {
-     if (!IsInside(Ind,Min[Ind],Max[Ind])) return false;
-   }
-   return true;
- }
+  template <typename Type, unsigned int Size>
+  inline bool Vector<Type, Size>::IsInside(Vector<Type, Size> const &Min, Vector<Type, Size> Max) const
+  {
+    for (unsigned Ind = 0; Ind < Size; ++Ind)
+    {
+      if (!IsInside(Ind, Min[Ind], Max[Ind]))
+        return false;
+    }
+    return true;
+  }
 
+  template <typename Type, unsigned int Size>
+  inline Type Vector<Type, Size>::Length() const
+  {
+    return sqrt(*this & *this);
+  }
 
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> &Vector<Type, Size>::operator+=(Vector<Type, Size> const &rSkl2)
+  {
+    for (unsigned int Ind = 0; Ind < Size; ++Ind)
+      _Coord[Ind] += rSkl2[Ind];
+    return *this;
+  }
 
- template<typename Type, unsigned int Size>
- inline
- Type Vector<Type,Size>::Length() const
- {
-   return sqrt(*this & *this);
- }
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> Vector<Type, Size>::operator+(Vector const &rSkl2) const
+  {
+    return Vector<Type, Size>(*this) += rSkl2;
+  }
 
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> &Vector<Type, Size>::operator-=(Vector<Type, Size> const &rOdj)
+  {
+    for (unsigned int Ind = 0; Ind < Size; ++Ind)
+      _Coord[Ind] -= rOdj[Ind];
+    return *this;
+  }
 
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> &Vector<Type,Size>::operator += (Vector<Type,Size> const &rSkl2)
- {
-   for (unsigned int Ind = 0; Ind < Size; ++Ind) _Coord[Ind] += rSkl2[Ind];
-   return *this;
- }
-  
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> Vector<Type, Size>::operator-(Vector<Type, Size> const &rOdj) const
+  {
+    return Vector<Type, Size>(*this) -= rOdj;
+  }
 
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> Vector<Type,Size>::operator + (Vector const &rSkl2) const
- {
-   return Vector<Type,Size>(*this) += rSkl2;
- }
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> &Vector<Type, Size>::operator*=(Type Mnoznik)
+  {
+    for (Type Crd : _Coord)
+      Crd *= Mnoznik;
+    return *this;
+  }
 
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> Vector<Type, Size>::operator*(Type Mnoznik) const
+  {
+    return Vector<Type, Size>(*this) *= Mnoznik;
+  }
 
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> &Vector<Type,Size>::operator -= (Vector<Type,Size> const & rOdj)
- {
-   for (unsigned int Ind = 0; Ind < Size; ++Ind) _Coord[Ind] -= rOdj[Ind];
-   return *this;
- }
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> &Vector<Type, Size>::operator/=(Type Digit)
+  {
+    for (Type Crd : _Coord)
+      Crd /= Digit;
+    return *this;
+  }
 
+  template <typename Type, unsigned int Size>
+  inline Vector<Type, Size> Vector<Type, Size>::operator/(Type Dzielnik) const
+  {
+    return Vector<Type, Size>(*this) /= Dzielnik;
+  }
 
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> Vector<Type,Size>::operator - (Vector<Type,Size>  const &rOdj) const
- {
-   return Vector<Type,Size>(*this) -= rOdj;
- }
+  template <typename Type, unsigned int Size>
+  inline bool Vector<Type, Size>::operator==(Vector<Type, Size> const &rArg2)
+  {
+    for (unsigned int Idx = 0; Idx < Size; ++Idx)
+      if (Sgn(_Coord[Idx] - rArg2[Idx]) != 0)
+        return false;
+    return true;
+  }
 
-
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> &Vector<Type,Size>::operator *= (Type Mnoznik)
- {
-   for (Type Crd : _Coord ) Crd *= Mnoznik;
-   return *this;
- }
-
-
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> Vector<Type,Size>::operator * (Type Mnoznik) const
- {
-   return Vector<Type,Size>(*this) *= Mnoznik;  
- }
-
-
-
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> &Vector<Type,Size>::operator /= (Type Digit)
- {
-   for (Type Crd : _Coord ) Crd /= Digit;
-   return *this;
- }
-  
-
- template<typename Type, unsigned int Size>
- inline
- Vector<Type,Size> Vector<Type,Size>::operator / (Type Dzielnik) const
- {
-   return Vector<Type,Size>(*this) /= Dzielnik;    
- }
-
-
- template<typename Type, unsigned int Size>
- inline
- bool Vector<Type,Size>::operator == (Vector<Type,Size> const &rArg2)
- {
-   for (unsigned int Idx = 0; Idx < Size; ++Idx)
-             if (Sgn(_Coord[Idx]-rArg2[Idx]) != 0) return false;
-   return true;
- }
-
-
- template<typename Type, unsigned int Size>
- inline
- Type Vector<Type,Size>::operator & (Vector<Type,Size> const &rVec) const
- {
-   Type Res = 0;
-   for (unsigned int Idx = 0; Idx < Size; ++Idx) Res += _Coord[Idx] * rVec[Idx];  
-   return Res;
- }
+  template <typename Type, unsigned int Size>
+  inline Type Vector<Type, Size>::operator&(Vector<Type, Size> const &rVec) const
+  {
+    Type Res = 0;
+    for (unsigned int Idx = 0; Idx < Size; ++Idx)
+      Res += _Coord[Idx] * rVec[Idx];
+    return Res;
+  }
 
 }
-
-
 
 /*!
  * \brief Wypisuje współrzędne wektora do tekstowego strumienia wyjściowego.
@@ -420,18 +422,16 @@ namespace geom {
  *  \param OStrm - strumień wyjściowy, do którego wpisywane są współrzędne wektora,
  *  \param V - wektor, ktorego współrzędne mają zostać wypisane.
  */
-template<typename Type, unsigned int Size>
-inline
-std::ostream & operator << ( std::ostream &OStrm, const geom::Vector<Type,Size> &V)
+template <typename Type, unsigned int Size>
+inline std::ostream &operator<<(std::ostream &OStrm, const geom::Vector<Type, Size> &V)
 {
   OStrm << "(" << V[0];
-   for (unsigned int Ind = 1; Ind < Size; ++Ind) {
-     OStrm << ", " << V[Ind];
-   }
-   OStrm << ")";
-   return OStrm;
+  for (unsigned int Ind = 1; Ind < Size; ++Ind)
+  {
+    OStrm << ", " << V[Ind];
+  }
+  OStrm << ")";
+  return OStrm;
 }
-
-
 
 #endif

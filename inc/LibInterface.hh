@@ -1,23 +1,26 @@
-#pragma once
+#ifndef LIBINTERFACE_HH
+#define LIBINTERFACE_HH
 
+#include <map>
 #include <string>
-#include <dlfcn.h>
-
 #include "Interp4Command.hh"
+#include <dlfcn.h>
+#include <iostream>
 
-class LibInterface
-{
-private:
-  void *_LibHandler;
-  Interp4Command *(*_pCreateCmd)(void);
+using namespace std;
 
-  std::string _CmdName;
-  Interp4Command *_pCmd;
+class LibInterface{
+    private:
+        void* handler;
+        
+    public:
+        string name;
+        LibInterface(string path);
+        ~LibInterface();
+        bool init();
+        bool load(string path);
 
-public:
-  LibInterface(const char *libName, int mode = RTLD_LAZY);
-  ~LibInterface();
-
-  std::string getCmdName();
-  Interp4Command *getCmd();
+        Interp4Command * (*CreateCmd)(void);
 };
+
+#endif

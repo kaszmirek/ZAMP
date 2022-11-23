@@ -1,0 +1,12 @@
+#define PAUSE_TIME 1000
+
+Pause PAUSE_TIME
+Rotate Podstawa 45 Z 45 
+Pause PAUSE_TIME
+Rotate Podstawa.Ramie1 45 Y 45 
+Pause PAUSE_TIME
+Rotate Podstawa.Ramie1.Ramie2 45 Y 45 
+Pause PAUSE_TIME
+Rotate Podstawa 45 Z -45 
+Pause PAUSE_TIME
+Move Podstawa 5 10

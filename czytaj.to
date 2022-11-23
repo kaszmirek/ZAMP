@@ -1,4 +1,4 @@
-# Dostarczony plik Makefile umozliwia realizacje trzech 
+Dostarczony plik Makefile umozliwia realizacje trzech 
 zasadniczych podcelow i jednego podcelu pomocniczego.
 
  1. Celem domyslnym jest kompilacja, konsolidacja i nastepnie

@@ -1,16 +1,14 @@
 
 
-__start__: obj __lines_for_space__ ../libs/libInterp4Move.so
-__start__: obj __lines_for_space__ ../libs/libInterp4Pause.so
-__start__: obj __lines_for_space__ ../libs/libInterp4Rotate.so
-__start__: obj __lines_for_space__ ../libs/libInterp4Set.so 
-	@echo "  Tworzenie wtyczki zakonczone."
+__start__: obj __lines_for_space__ ../libs/libInterp4Move.so ../libs/libInterp4Rotate.so\
+						../libs/libInterp4Set.so ../libs/libInterp4Pause.so
+	@echo "  Tworzenie wtyczek zakonczone."
 	@echo
 
 obj:
 	mkdir obj
 
-CPPFLAGS=-Wall -fPIC -pedantic -std=c++17 -Iinc -I../inc
+CPPFLAGS=-Wall -fPIC -pedantic -std=c++17 -iquote inc -iquote ../inc
 LDFLAGS=-Wall -shared
 
 __lines_for_space__:
@@ -20,8 +18,6 @@ __lines_for_space__:
 	@echo
 	@echo
 
-###################
-
 ../libs/libInterp4Move.so: obj/Interp4Move.o
 	g++ ${LDFLAGS} -o ../libs/libInterp4Move.so obj/Interp4Move.o
 	@echo
@@ -29,22 +25,8 @@ __lines_for_space__:
 	@echo
 
 obj/Interp4Move.o: src/Interp4Move.cpp ../inc/Interp4Command.hh\
-                        inc/Interp4Move.hh 
+                        inc/Interp4Move.hh ../inc/MobileObj.hh
 	g++ -c ${CPPFLAGS} -o obj/Interp4Move.o src/Interp4Move.cpp
-
-###################
-
-../libs/libInterp4Pause.so: obj/Interp4Pause.o
-	g++ ${LDFLAGS} -o ../libs/libInterp4Pause.so obj/Interp4Pause.o
-	@echo
-	@echo "  Wtyczka dla polecenia 'Pause' zostala utworzona."
-	@echo
-
-obj/Interp4Pause.o: src/Interp4Pause.cpp ../inc/Interp4Command.hh\
-                        inc/Interp4Pause.hh 
-	g++ -c ${CPPFLAGS} -o obj/Interp4Pause.o src/Interp4Pause.cpp
-
-###################
 
 ../libs/libInterp4Rotate.so: obj/Interp4Rotate.o
 	g++ ${LDFLAGS} -o ../libs/libInterp4Rotate.so obj/Interp4Rotate.o
@@ -53,10 +35,9 @@ obj/Interp4Pause.o: src/Interp4Pause.cpp ../inc/Interp4Command.hh\
 	@echo
 
 obj/Interp4Rotate.o: src/Interp4Rotate.cpp ../inc/Interp4Command.hh\
-                        inc/Interp4Rotate.hh 
+                        inc/Interp4Rotate.hh ../inc/MobileObj.hh
 	g++ -c ${CPPFLAGS} -o obj/Interp4Rotate.o src/Interp4Rotate.cpp
 
-###################
 
 ../libs/libInterp4Set.so: obj/Interp4Set.o
 	g++ ${LDFLAGS} -o ../libs/libInterp4Set.so obj/Interp4Set.o
@@ -65,10 +46,19 @@ obj/Interp4Rotate.o: src/Interp4Rotate.cpp ../inc/Interp4Command.hh\
 	@echo
 
 obj/Interp4Set.o: src/Interp4Set.cpp ../inc/Interp4Command.hh\
-                        inc/Interp4Set.hh 
+                        inc/Interp4Set.hh ../inc/MobileObj.hh
 	g++ -c ${CPPFLAGS} -o obj/Interp4Set.o src/Interp4Set.cpp
 
-###################
+
+../libs/libInterp4Pause.so: obj/Interp4Pause.o
+	g++ ${LDFLAGS} -o ../libs/libInterp4Pause.so obj/Interp4Pause.o
+	@echo
+	@echo "  Wtyczka dla polecenia 'Pause' zostala utworzona."
+	@echo
+
+obj/Interp4Pause.o: src/Interp4Pause.cpp ../inc/Interp4Command.hh\
+                        inc/Interp4Pause.hh ../inc/MobileObj.hh
+	g++ -c ${CPPFLAGS} -o obj/Interp4Pause.o src/Interp4Pause.cpp
 
 clean:
 	rm -f obj/*

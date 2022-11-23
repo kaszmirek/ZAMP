@@ -1,8 +1,10 @@
-#ifndef INTERP4COMMAND_HH
-#define INTERP4COMMAND_HH
+#ifndef  INTERP4COMMAND_HH
+#define  INTERP4COMMAND_HH
 
 #include <iostream>
 #include "MobileObj.hh"
+#include "AccessControl.hh"
+ #include <unistd.h>
 
 /*!
  * \file
@@ -16,35 +18,34 @@
  *
  *  Klasa modeluje ...
  */
-class Interp4Command
-{
-public:
-  /*!
-   * \brief Destruktor wirtualny ze wzgledu na klasy pochodne
-   *
-   *
-   */
-  virtual ~Interp4Command() {}
-  /*!
-   * \brief Wyświetla postać bieżącego polecenia (nazwę oraz wartości parametrów).
-   */
-  virtual void PrintCmd() const = 0;
-  /*!
-   * \brief Wyświetla składnię polecenia.
-   */
-  virtual void PrintSyntax() const = 0;
-  /*!
-   * \brief Wyświetla nazwę polecenia.
-   */
-  virtual const char *GetCmdName() const = 0;
-  /*!
-   * \brief Wykonuje polecenie oraz wizualizuje jego realizację.
-   */
-  virtual bool ExecCmd(MobileObj *pMobObj, int Socket) const = 0;
-  /*!
-   * \brief Czyta wartości parametrów danego polecenia.
-   */
-  virtual bool ReadParams(std::istream &Strm_CmdsList) = 0;
-};
+ class Interp4Command {
+  public:
+   /*!
+    * \brief Destruktor wirtualny ze wzgledu na klasy pochodne
+    *
+    *  
+    */
+   virtual ~Interp4Command() {}
+   /*!
+    * \brief Wyświetla postać bieżącego polecenia (nazwę oraz wartości parametrów).
+    */
+   virtual void PrintCmd() const = 0;
+   /*!
+    * \brief Wyświetla składnię polecenia.
+    */
+   virtual void PrintSyntax() const = 0;
+   /*!
+    * \brief Wyświetla nazwę polecenia.
+    */
+   virtual const char* GetCmdName() const = 0;
+   /*!
+    * \brief Wykonuje polecenie oraz wizualizuje jego realizację.
+    */
+   virtual bool ExecCmd( MobileObj *pMobObj, int Socket, AccessControl * mutex) const = 0;
+   /*!
+    * \brief Czyta wartości parametrów danego polecenia.
+    */
+   virtual bool ReadParams(std::istream& Strm_CmdsList) = 0;
+ };
 
 #endif

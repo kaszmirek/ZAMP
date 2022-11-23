@@ -1,44 +1,34 @@
 #include "LibInterface.hh"
 
-#include <iostream>
-
-using std::cerr;
-using std::cout;
-using std::endl;
-
-LibInterface::LibInterface(const char *libName, int mode)
-{
-  _LibHandler = dlopen(libName, mode);
-  if (!_LibHandler)
-  {
-    cerr << "!!! Brak biblioteki: " << libName << endl;
-    exit(1);
-  }
-
-  void *pFun = dlsym(_LibHandler, "CreateCmd");
-  if (!pFun)
-  {
-    cerr << "!!! Nie znaleziono funkcji CreateCmd" << endl;
-    exit(1);
-  }
-
-  _pCreateCmd = *reinterpret_cast<Interp4Command *(**)(void)>(&pFun);
-  _pCmd = _pCreateCmd();
-  _CmdName = _pCmd->GetCmdName();
+LibInterface::LibInterface(string path){
+    LibInterface::load(path);
+    LibInterface::init();
 }
 
-LibInterface::~LibInterface()
-{
-  delete _pCmd;
-  dlclose(_LibHandler);
+LibInterface::~LibInterface(){
+    dlclose(this->handler);
 }
 
-std::string LibInterface::getCmdName()
-{
-  return _CmdName;
+bool LibInterface::init(){
+    void * new_cmd = dlsym(this->handler, "CreateCmd");
+    if (new_cmd == nullptr){
+        cerr << "Nie udalo się utworzyć komendy CreateCmd " << endl;
+        return false;
+    }
+    CreateCmd = reinterpret_cast<Interp4Command* (*)(void)>(new_cmd);
+    Interp4Command* interpreted_cmd = CreateCmd();
+    this->name = interpreted_cmd->GetCmdName();
+    delete interpreted_cmd;
+    return true;
 }
 
-Interp4Command *LibInterface::getCmd()
-{
-  return _pCmd;
+bool LibInterface::load(string path){
+    this->handler = dlopen(path.c_str(), RTLD_LAZY);
+    if (this->handler==nullptr) {
+        cerr << "!!! Brak biblioteki " << path << endl;
+        return false;
+    }else{
+        cout << "Załadowano biblioteke " << path << endl;
+        return true;
+    }
 }

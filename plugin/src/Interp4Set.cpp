@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Interp4Set.hh"
 #include "MobileObj.hh"
+#include <cstring>
 
 using std::cout;
 using std::endl;
@@ -54,23 +55,27 @@ const char* Interp4Set::GetCmdName() const
 /*!
  *
  */
-bool Interp4Set::ExecCmd( MobileObj  *pMobObj,  int  Socket, AccessControl * mutex ) const
+bool Interp4Set::ExecCmd( MobileObj  *pMobObj,  int  Socket, GuardedSocket * mutex ) const
 {
-  mutex->LockAccess(); // Zamykamy dostęp do sceny, gdy wykonujemy
-                            // modyfikacje na obiekcie.
-  cout << pMobObj->GetName() << "   ";
-  PrintCmd();
-  Vector3D pos = pMobObj->UsePosition_m();
-  pos[0]=_X_coord;
-  pos[1]=_Y_coord;
-  pos[2]=0;
-  pMobObj->SetPosition_m(pos);
-  pMobObj->SetAng_Roll_deg(_OX_deg);
-  pMobObj->SetAng_Pitch_deg(_OY_deg);
-  pMobObj->SetAng_Yaw_deg(_OZ_deg);
-  mutex->MarkChange();
-  mutex->UnlockAccess();
-  usleep(100000);
+  {
+    std::lock_guard<std::mutex>  Lock(mutex->UseGuard());// Zamykamy dostęp do sceny, gdy wykonujemy
+    cout << pMobObj->GetName() << "   ";
+    PrintCmd();
+    Vector3D pos = pMobObj->UsePosition_m();
+    pos[0]=_X_coord;
+    pos[1]=_Y_coord;
+    pos[2]=0;
+    pMobObj->SetPosition_m(pos);
+    pMobObj->SetAng_Roll_deg(_OX_deg);
+    pMobObj->SetAng_Pitch_deg(_OY_deg);
+    pMobObj->SetAng_Yaw_deg(_OZ_deg);
+
+    std::string message;
+    pMobObj->GetStateDesc(&message);
+    message = "UpdateObj " + message;
+    Send(mutex->GetSocket() , message.c_str()); 
+  }
+  usleep(30000);
   return true;
 }
 
@@ -100,4 +105,22 @@ Interp4Command* Interp4Set::CreateCmd()
 void Interp4Set::PrintSyntax() const
 {
   cout << "   Set  NazwaObiektu  wsp_x wsp_y kat_OX[deg] kat_OY[deg] kat_OZ[deg]" << endl;
+}
+
+
+int Send(int Sk2Server, const char *sMesg)
+{
+  ssize_t  IlWyslanych;
+  ssize_t  IlDoWyslania = (ssize_t) strlen(sMesg);
+  //cout<< "Debug przed wysłaniem! \n";
+  //cout << sMesg;
+
+  while ((IlWyslanych = write(Sk2Server,sMesg,IlDoWyslania)) > 0) {
+    IlDoWyslania -= IlWyslanych;
+    sMesg += IlWyslanych;
+  }
+  if (IlWyslanych < 0) {
+    cerr << "*** Blad przeslania napisu." << endl;
+  }
+  return 0;
 }

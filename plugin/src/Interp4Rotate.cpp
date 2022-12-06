@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Interp4Rotate.hh"
 #include "MobileObj.hh"
+#include <cstring>
 
 using std::cout;
 using std::endl;
@@ -56,7 +57,7 @@ const char* Interp4Rotate::GetCmdName() const
 /*!
  *
  */
-bool Interp4Rotate::ExecCmd( MobileObj  *pMobObj,  int  Socket, AccessControl * mutex ) const
+bool Interp4Rotate::ExecCmd( MobileObj  *pMobObj,  int  Socket, GuardedSocket * mutex ) const
 {
   double roll, pitch, yaw;
   int frame_number = 30*abs(_Angle_deg)/_Angular_speed_degs;
@@ -64,26 +65,30 @@ bool Interp4Rotate::ExecCmd( MobileObj  *pMobObj,  int  Socket, AccessControl * 
   cout << pMobObj->GetName() << "   ";
   PrintCmd();
   for(int i=0; i<frame_number; ++i){
-    mutex->LockAccess(); // Zamykamy dostęp do sceny, gdy wykonujemy
-                              // modyfikacje na obiekcie.
-    
-    switch(_Axis){
-      case 'X':
-        roll = pMobObj->GetAng_Roll_deg();
-        pMobObj->SetAng_Roll_deg(roll+angle);
-        break;
-      case 'Y':
-        pitch = pMobObj->GetAng_Pitch_deg();
-        pMobObj->SetAng_Pitch_deg(pitch+angle);
-        break;
-      case 'Z':
-        yaw = pMobObj->GetAng_Yaw_deg();
-        pMobObj->SetAng_Yaw_deg(yaw+angle);
-        break;
+    {
+      std::lock_guard<std::mutex>  Lock(mutex->UseGuard());
+      // Zamykamy dostęp do sceny, gdy wykonujemy
+      // modyfikacje na obiekcie.
+      switch(_Axis){
+        case 'X':
+          roll = pMobObj->GetAng_Roll_deg();
+          pMobObj->SetAng_Roll_deg(roll+angle);
+          break;
+        case 'Y':
+          pitch = pMobObj->GetAng_Pitch_deg();
+          pMobObj->SetAng_Pitch_deg(pitch+angle);
+          break;
+        case 'Z':
+          yaw = pMobObj->GetAng_Yaw_deg();
+          pMobObj->SetAng_Yaw_deg(yaw+angle);
+          break;
+      }
+    std::string message;
+    pMobObj->GetStateDesc(&message);
+    message = "UpdateObj " + message;
+    Send(mutex->GetSocket() , message.c_str()); 
     }
-    mutex->MarkChange();
-    mutex->UnlockAccess();
-    usleep(100000);
+    usleep(30000);
   };
 
   return true;
@@ -115,4 +120,22 @@ Interp4Command* Interp4Rotate::CreateCmd()
 void Interp4Rotate::PrintSyntax() const
 {
   cout << "   Rotate  NazwaObiektu  Szybkość_kątowa[deg/s] nazwa_osi Kąt_obrotu[deg]" << endl;
+}
+
+
+int Send(int Sk2Server, const char *sMesg)
+{
+  ssize_t  IlWyslanych;
+  ssize_t  IlDoWyslania = (ssize_t) strlen(sMesg);
+  //cout<< "Debug przed wysłaniem! \n";
+  //cout << sMesg;
+
+  while ((IlWyslanych = write(Sk2Server,sMesg,IlDoWyslania)) > 0) {
+    IlDoWyslania -= IlWyslanych;
+    sMesg += IlWyslanych;
+  }
+  if (IlWyslanych < 0) {
+    cerr << "*** Blad przeslania napisu." << endl;
+  }
+  return 0;
 }

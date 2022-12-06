@@ -12,7 +12,7 @@
 #include <string>
 #include <memory>
 #include <map>
-#include "AccessControl.hh"
+#include "GuardedSocket.hh"
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
@@ -29,12 +29,12 @@ typedef shared_ptr<MobileObj> Object_ptr;
  *
  *  Klasa modeluje ...
  */
-class Scene:  public AccessControl {
+class Scene:  public GuardedSocket {
  private:
  public:
    Set_MobileObjs &obj_list;
  
-   Scene(Set_MobileObjs &obj_list);
+   Scene(Set_MobileObjs &obj_list, int socket);
    ~Scene();
 
  /*!

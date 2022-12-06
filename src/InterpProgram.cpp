@@ -1,7 +1,6 @@
 #include "InterpProgram.hh"
-#include "Sender.hh"
-
-
+#include <vector>
+#include <thread>
 
 bool InterpProgram::exec_preprocessor(const std::string &name, std::istringstream &stream){
     bool result = false;
@@ -27,7 +26,7 @@ bool InterpProgram::exec_preprocessor(const std::string &name, std::istringstrea
 
 InterpProgram::InterpProgram(Set_MobileObjs &obj_list, int socket){
     this->_Socket = socket;
-    this->scene = new Scene(obj_list);
+    this->scene = new Scene(obj_list, socket);
 }
 
 InterpProgram::~InterpProgram(){
@@ -37,49 +36,72 @@ InterpProgram::~InterpProgram(){
     }
 }
 
+void Fun4Thread_ExecCmd(Interp4Command *CmdInterp, MobileObj *pMObj, int socket, GuardedSocket *pAccCtrl)
+{
+  CmdInterp->ExecCmd(pMObj,socket, pAccCtrl); 
+}
+
 bool InterpProgram::exec_program(const std::string filename, Set4LibInterfaces &lib_set){
     istringstream iss;
     this->exec_preprocessor(filename, iss);
     string cmd_name;
     string object_name;
+    int parallel_exec_flag=0;
+    std::shared_ptr<Interp4Command>               PInterp;
+    std::vector<std::shared_ptr<Interp4Command>>  Tab4Interps;
+    std::vector<std::thread>                      Tab4Threads;
+
+    Tab4Interps.reserve(10);  Tab4Threads.reserve(10);
 
     while (iss >> cmd_name)
     {
-        
+        if(cmd_name == "Begin_Parallel_Actions"){
+            parallel_exec_flag=1;
+            cout << "DEBUG: begin parallel action"<<endl;
+        }else if(cmd_name == "End_Parallel_Actions"){
+            parallel_exec_flag=0;
+            cout << "DEBUG: end parallel action"<<endl;
+            for (std::thread &Th : Tab4Threads) Th.join();
+        }else{
+            shared_ptr<LibInterface> library = lib_set.find(cmd_name); // wyszukaj plugin
 
-        shared_ptr<LibInterface> library = lib_set.find(cmd_name); // wyszukaj plugin
+            if (nullptr == library)
+            {
+            cout << "Nie znaleziono komendy: " << cmd_name << endl;
+            return false;
+            }
 
-        if (nullptr == library)
-        {
-        cout << "Nie znaleziono komendy: " << cmd_name << endl;
-        return false;
+            Interp4Command * cmd = library->CreateCmd(); // utworzenie interpreter
+            if(cmd_name != "Pause"){
+                iss >> object_name; // wczytaj nazwę obiektu
+            }
+
+
+            if(false == cmd->ReadParams(iss)) // odczyt parametrow
+            {
+            cout << "Błąd czytania parametrów" << endl;
+            delete cmd;
+            return false;
+            }
+
+            
+            Object_ptr object = scene->FindMobileObj(object_name); // znajdź obiekt
+
+            if (nullptr == object && cmd_name != "Pause")
+            {
+            cout << "Nie można znaleźć obiektu o nazwie: " << object_name << endl;
+            delete cmd;
+            return false;
+            }
+            if(parallel_exec_flag==1){
+                PInterp = std::shared_ptr<Interp4Command>(cmd);
+                Tab4Interps.push_back(PInterp);
+                Tab4Threads.push_back(std::thread(Fun4Thread_ExecCmd,PInterp.get(),object.get(),_Socket,scene));  
+            }else{
+                cmd->ExecCmd(object.get(), _Socket, scene); // wykonaj operację
+            }
+   
         }
-
-        Interp4Command * cmd = library->CreateCmd(); // utworzenie interpreter
-        if(cmd_name != "Pause"){
-            iss >> object_name; // wczytaj nazwę obiektu
-        }
-
-
-        if(false == cmd->ReadParams(iss)) // odczyt parametrow
-        {
-        cout << "Błąd czytania parametrów" << endl;
-        delete cmd;
-        return false;
-        }
-
-        
-        Object_ptr object = scene->FindMobileObj(object_name); // znajdź obiekt
-
-        if (nullptr == object && cmd_name != "Pause")
-        {
-        cout << "Nie można znaleźć obiektu o nazwie: " << object_name << endl;
-        delete cmd;
-        return false;
-        }
-
-        cmd->ExecCmd(object.get(), 0, scene); // wykonaj operację
-        delete cmd;
     }
 
     return true;
@@ -94,4 +116,4 @@ void InterpProgram::SendScene(){
       Send(_Socket,message.c_str()); // Tu musi zostać wywołanie odpowiedniej
                                         // metody/funkcji gerującej polecenia dla serwera.
     };
-};
+}

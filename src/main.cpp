@@ -1,14 +1,19 @@
 
 #include "xmlinterp.hh"
-
+#include "Port.hh"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <iostream>
 #include <dlfcn.h>
 #include <cassert>
 #include "Configuration.hh"
 #include "InterpProgram.hh"
-#include "Sender.hh"
 
 using namespace std;
+
+
 
 
 /*!
@@ -44,20 +49,6 @@ bool OpenConnection(int &rSocket)
 
 
 
-/*!
- * \brief Funkcja jest treścią wątku komunikacyjnego
- * 
- * Funkcja jest treścią wątku komunikacyjnego.
- * \param[in] rSender - odpowiada za śledenie zmian na scenie 
- *                      i przesyłanie do serwera graficznego
- *                      aktualnego stanu sceny, gdy uległ on zmianie.
- */
-void Fun_CommunicationThread(Sender  *pSender)
-{
-  pSender->Watching_and_Sending();
-}
-
-
 
 int main()
 {
@@ -75,10 +66,6 @@ int main()
   cout << "Stworzono program\n";
   InterpProgram program(obj_list, Socket4Sending);
 
-  Sender   ClientSender(Socket4Sending, program.GetScenePtr());
-  //  thread   Thread4Sending(Fun_Sender, Socket4Sending, &ClientSender);
-
-  thread   Thread4Sending(Fun_CommunicationThread,&ClientSender);
   const char *sConfigCmds = "Clear\n";
   cout << "Clear\n" << endl; 
   Send(Socket4Sending,sConfigCmds); 
@@ -100,8 +87,6 @@ int main()
   cout << "Close\n" << endl; 
   sConfigCmds = "Close\n";
   Send(Socket4Sending,sConfigCmds);
-  ClientSender.CancelCountinueLooping();
-  Thread4Sending.join();
   close(Socket4Sending);
 
   return return_val;

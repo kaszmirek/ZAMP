@@ -4,7 +4,7 @@
  * Konstruktor klasy. Tutaj należy zainicjalizować wszystkie
  * dodatkowe pola.
  */
-Scene::Scene(Set_MobileObjs &obj_list): obj_list(obj_list) {
+Scene::Scene(Set_MobileObjs &obj_list, int socket): obj_list(obj_list), GuardedSocket::GuardedSocket(socket) {
   Set_MobileObjs::iterator it;
   for (it = obj_list.begin(); it != obj_list.end(); it++)
   {

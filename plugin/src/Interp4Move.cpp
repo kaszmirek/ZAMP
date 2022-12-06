@@ -2,7 +2,8 @@
 #include "Interp4Move.hh"
 #include "MobileObj.hh"
 #include <cmath>
-#include "AccessControl.hh"
+#include "GuardedSocket.hh"
+#include <cstring>
 
 using std::cout;
 using std::endl;
@@ -55,7 +56,7 @@ const char* Interp4Move::GetCmdName() const
 /*!
  *
  */
-bool Interp4Move::ExecCmd( MobileObj  *pMobObj,  int  Socket, AccessControl * mutex ) const
+bool Interp4Move::ExecCmd( MobileObj  *pMobObj,  int  Socket, GuardedSocket * mutex ) const
 {
   double dist, pitch, yaw;
   int frame_number = 30*_Distance_m/abs(_Speed_mS);
@@ -68,21 +69,25 @@ bool Interp4Move::ExecCmd( MobileObj  *pMobObj,  int  Socket, AccessControl * mu
   }
   dist = dist/frame_number;
   for(int i=0; i<frame_number; ++i){
-    mutex->LockAccess(); // Zamykamy dostęp do sceny, gdy wykonujemy
+    {
+      std::lock_guard<std::mutex>  Lock(mutex->UseGuard()); // Zamykamy dostęp do sceny, gdy wykonujemy
                               // modyfikacje na obiekcie.
 
-    Vector3D pos = pMobObj->UsePosition_m();
-    pitch = pMobObj->GetAng_Pitch_deg();
-    yaw = pMobObj->GetAng_Yaw_deg();
-    cout << "New pos " << pos << endl;
-    pos[0] += dist * cos(pitch*PI/180) * cos(yaw*PI/180);
-    pos[1] += dist * cos(pitch*PI/180) * sin(yaw*PI/180);
-    pos[2] += -1*dist * sin(pitch*PI/180);
-    pMobObj->SetPosition_m(pos);
+      Vector3D pos = pMobObj->UsePosition_m();
+      pitch = pMobObj->GetAng_Pitch_deg();
+      yaw = pMobObj->GetAng_Yaw_deg();
+      cout << "New pos " << pos << endl;
+      pos[0] += dist * cos(pitch*PI/180) * cos(yaw*PI/180);
+      pos[1] += dist * cos(pitch*PI/180) * sin(yaw*PI/180);
+      pos[2] += -1*dist * sin(pitch*PI/180);
+      pMobObj->SetPosition_m(pos);
 
-    mutex->MarkChange();
-    mutex->UnlockAccess();
-    usleep(100000);
+      std::string message;
+      pMobObj->GetStateDesc(&message);
+      message = "UpdateObj " + message;
+      Send(mutex->GetSocket() , message.c_str()); 
+    }
+    usleep(30000);
   };
   return true;
 }
@@ -113,4 +118,23 @@ Interp4Command* Interp4Move::CreateCmd()
 void Interp4Move::PrintSyntax() const
 {
   cout << "   Move  NazwaObiektu  Szybkosc[m/s]  DlugoscDrogi[m]" << endl;
+}
+
+
+
+int Send(int Sk2Server, const char *sMesg)
+{
+  ssize_t  IlWyslanych;
+  ssize_t  IlDoWyslania = (ssize_t) strlen(sMesg);
+  //cout<< "Debug przed wysłaniem! \n";
+  //cout << sMesg;
+
+  while ((IlWyslanych = write(Sk2Server,sMesg,IlDoWyslania)) > 0) {
+    IlDoWyslania -= IlWyslanych;
+    sMesg += IlWyslanych;
+  }
+  if (IlWyslanych < 0) {
+    cerr << "*** Blad przeslania napisu." << endl;
+  }
+  return 0;
 }

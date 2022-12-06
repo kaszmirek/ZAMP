@@ -1,11 +1,11 @@
-#ifndef ACCESSGUARD_HH
-#define ACCESSGUARD_HH
+#ifndef GUARDEDSOCKET_HH
+#define GUARDEDSOCKET_HH
 
 #include <mutex>
 
 /*!
  * \file
- * \brief Zawiera definicję klasy AccessGuard
+ * \brief Zawiera definicję klasy GuardedSocket
  */
 
 /*!
@@ -15,7 +15,7 @@
  *  który powinien być wykorzystany nadzorca wyłącznego dostępu
  *  do sceny oraz gniazda połączenia sieciowego z serwerem.
  */
-class AccessGuard {
+class GuardedSocket {
    /*!
     * \brief Zapewnia wyłączny dostęp do obiektu w trakcie modyfikacji.
     */
@@ -38,7 +38,7 @@ class AccessGuard {
    * sieciowym z serwerem.
    * \param[in] Socket - zawiera poprawny deskryptor.
    */
-   AccessGuard(int Socket): _Socket(Socket) {}
+   GuardedSocket(int Socket): _Socket(Socket) {}
   /*!
    * \brief Udostępnia deskryptor pliku skojarzonego z połączeniem
    *        sieciowym z serwerem.

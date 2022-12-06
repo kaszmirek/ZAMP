@@ -3,8 +3,12 @@
 
 #include <iostream>
 #include "MobileObj.hh"
-#include "AccessControl.hh"
- #include <unistd.h>
+#include "GuardedSocket.hh"
+#include <unistd.h>
+#include <sstream>
+#include <mutex>
+#include "Sender.hh"
+
 
 /*!
  * \file
@@ -41,7 +45,7 @@
    /*!
     * \brief Wykonuje polecenie oraz wizualizuje jego realizację.
     */
-   virtual bool ExecCmd( MobileObj *pMobObj, int Socket, AccessControl * mutex) const = 0;
+   virtual bool ExecCmd( MobileObj *pMobObj, int Socket, GuardedSocket * mutex) const = 0;
    /*!
     * \brief Czyta wartości parametrów danego polecenia.
     */

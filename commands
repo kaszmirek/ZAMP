@@ -2,21 +2,21 @@
 
 
 Pause PAUSE_TIME
-Rotate OBJ_B 45 Z 45
+Rotate Podstawa 45 Z 45
 
 Pause PAUSE_TIME
-Rotate OBJ_B.A 45 Y 45
+Rotate Podstawa.Ramie1 45 Y 45
 
 Pause PAUSE_TIME
-Rotate OBJ_B.A.C 45 Y 45
+Rotate Podstawa.Ramie1.Ramie2 45 Y 45
 
 Pause PAUSE_TIME
-Rotate OBJ_B 45 Z -45
+Rotate Podstawa 45 Z -45
 
 Pause PAUSE_TIME
 Begin_Parallel_Actions
-Move OBJ_B 4 24
-Rotate OBJ_B 60 Z -360
-Rotate OBJ_B 60 X 360
+Move Podstawa 4 24
+Rotate Podstawa 60 Z -360
+Rotate Podstawa 60 X 360
 End_Parallel_Actions
 

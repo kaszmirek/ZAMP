@@ -7,11 +7,11 @@
    </Plugins>
    <Objects>
       <Cube Name="Podstawa" Shift="0 0 0" Scale="1.2 0.8 0.6"
-                RotXYZ_deg="0 0 0" Trans_m="0 0 0.3" RGB="128 0 128"/>
+                RotXYZ_deg="0 0 0" Trans_m="0 0 0.3" RGB="0 0 128"/>
       <Cube Name="Podstawa.Ramie1" Shift="0.7 0 0" Scale="1.4 0.05 0.2"
-                RotXYZ_deg="0 -90 0" Trans_m="-0.1 0 0" RGB="0 128 128"/>
+                RotXYZ_deg="0 -90 0" Trans_m="-0.1 0 0" RGB="128 0 0"/>
       <Cube Name="Podstawa.Ramie1.Ramie2" Shift="0.5 0 0" Scale="1.4 0.05 0.2"
-                RotXYZ_deg="0 0 0" Trans_m="1.6 0 0" RGB="0 128 128"/>
+                RotXYZ_deg="0 0 0" Trans_m="1.6 0 0" RGB="0 128 0"/>
    </Objects>
   </Config>
   

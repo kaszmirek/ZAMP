@@ -1,5 +1,6 @@
 #include "InterpProgram.hh"
 #include <vector>
+#include <list>
 #include <thread>
 
 bool InterpProgram::exec_preprocessor(const std::string &name, std::istringstream &stream){
@@ -49,9 +50,9 @@ bool InterpProgram::exec_program(const std::string filename, Set4LibInterfaces &
     int parallel_exec_flag=0;
     std::shared_ptr<Interp4Command>               PInterp;
     std::vector<std::shared_ptr<Interp4Command>>  Tab4Interps;
-    std::vector<std::thread>                      Tab4Threads;
+    std::list<std::thread>                      Tab4Threads;
 
-    Tab4Interps.reserve(10);  Tab4Threads.reserve(10);
+    Tab4Interps.reserve(10);  //Tab4Threads.reserve(10);
 
     while (iss >> cmd_name)
     {
